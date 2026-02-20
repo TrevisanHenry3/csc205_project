@@ -1,0 +1,218 @@
+<script setup>
+import CourseCard from "@/components/CourseCard.vue";
+import { ref } from "vue";
+
+const isOpen = ref(0);
+
+const collapses = ref([
+    {
+        title: "Core",
+        text: `BIB 112`,
+    },
+    {
+        title: "Major",
+        text: "CSC 102",
+    },
+    {
+        title: "Minor",
+        text: "BUS 101",
+    },
+]);
+
+</script>
+
+
+<template>
+    <div class="dashboardContainer">
+        <div class="degreeProgress">
+            <div class="container">
+                <h2>Steven Adams</h2>
+            </div>
+            <div class="container">
+                <p>Freshman | 22 credits</p>
+            </div>
+
+            <div class="containerProgress">
+                <label><strong>Major:</strong> Cybersecurity</label>
+                <div class="progressBar">
+                    <div class="fill" style="width: 25%;"></div>
+                </div>
+                <p>6 / 24</p>
+            </div>
+            <div class="containerProgress">
+                <label><strong>Minor:</strong> Data Science</label>
+                <div class="progressBar">
+                    <div class="fill" style="width: 17%;"></div>
+                </div>
+                <p>3 / 18</p>
+            </div>
+            <div class="containerProgress">
+                <label><strong>Total:</strong></label>
+                <div class="progressBar">
+                    <div class="fill" style="width: 25%;"></div>
+                </div>
+                <p>30 / 120</p>
+            </div>
+        </div>
+
+        <div class="scheduleLayout">
+            <section class="column">
+                <h2>Fall 2026</h2>
+            </section>
+            <section class="column">
+                <h2>Spring 2027</h2>
+            </section>
+        </div>
+
+        <div class="courseCatalog">
+            <section>
+                <!--Taken from https://oruga-ui.com/components/Collapse.html-->
+                <o-collapse v-for="(collapse, index) of collapses" :key="index" class="card" animation="slide"
+                    :open="isOpen === index" @update:open="isOpen = (isOpen === index ? null : index)">
+                    <template #trigger="{ open }">
+                        <div class="card-header"
+                            style="cursor: pointer; display: flex; justify-content: space-between;">
+                            <span class="card-header-title">
+                                {{ collapse.title }}
+                            </span>
+                            <span class="card-header-icon">
+                                <o-icon :icon="open ? 'caret-up' : 'caret-down'" />
+                            </span>
+                        </div>
+                    </template>
+
+                    <div class="card-content" style="border: 1px solid #eee; border-top: none;">
+                        <div class="content" v-html="collapse.text"></div>
+                        <div class="cardContent">
+                            <CourseCard />
+                        </div>
+                    </div>
+                </o-collapse>
+                <div>
+
+                </div>
+            </section>
+
+        </div>
+    </div>
+</template>
+
+<style>
+.dashboardContainer {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 50% 1fr;
+    gap: 30px;
+    color: black !important;
+}
+
+.degreeProgress {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 200px;
+    min-height: 300px;
+}
+
+.containerProgress {
+    flex: 1;
+}
+
+.progressBar {
+    flex-grow: 1;
+    height: 12px;
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.fill {
+    height: 100%;
+    background: green;
+}
+
+.scheduleLayout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.column {
+    border: 2px solid;
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 300px;
+    text-align: center;
+}
+
+.courseCatalog {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid;
+    border-radius: 8px;
+    margin-bottom: 200px;
+}
+
+.collapsible {
+    background-color: bisque;
+    color: #444;
+    cursor: pointer;
+    width: 100%;
+    border: 1px solid;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 20px;
+}
+
+.courses {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+}
+
+.active,
+.collapsible:hover {
+    background-color: #ffcb71;
+}
+
+/* Taken from oruga demo */
+.card {
+    position: relative;
+    background-color: bisque !important;
+}
+
+.collapse-trigger {
+    width: 100%;
+    overflow: hidden;
+}
+
+.collapse-trigger:hover {
+    background-color: #ffcb71 !important;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+}
+
+.card-header-title {
+    flex-grow: 1;
+    font-weight: 700;
+    padding: 0.75rem;
+}
+
+.card-header-icon {
+    cursor: pointer;
+    padding: 0.75rem;
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: block;
+}
+</style>
