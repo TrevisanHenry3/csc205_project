@@ -59,6 +59,11 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 .studentTable {
   width: 100%;
   border: 2px solid;
+  border-radius: 8px;
+}
+
+th {
+  background-color: #ffcb71;
 }
 
 tr:hover {

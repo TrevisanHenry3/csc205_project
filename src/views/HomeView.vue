@@ -19,7 +19,7 @@
       </o-field>
     </section>
 
-    <o-button class="login">Login</o-button>
+    <o-button @click="$router.push('list')" class="login">Login</o-button>
   </div>
 </template>
 

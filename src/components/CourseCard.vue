@@ -36,6 +36,7 @@
     overflow: hidden;
     height: 80px;
     width: 100%;
+    margin-bottom: 1rem;
 }
 
 .categoryIndicator {

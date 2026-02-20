@@ -17,7 +17,7 @@ import { RouterLink } from 'vue-router';
             <RouterLink to="/list" class="navTab">Student List</RouterLink>
           </li>
           <li>
-            <RouterLink to="/main" class="navTab">Main</RouterLink>
+            <RouterLink to="/main" class="navTab">Schedule View</RouterLink>
           </li>
         </ul>
 
@@ -88,6 +88,7 @@ import { RouterLink } from 'vue-router';
   font-size: large;
   display: block;
   padding: 20px 20px;
+  color: white
 }
 
 /* This overrides Bulma's default .dropdown-item padding */
@@ -97,7 +98,7 @@ import { RouterLink } from 'vue-router';
 
 .navTab {
   display: block;
-  padding: 0px 10px
+  padding: 0px 10px;
 }
 
 nav a.router-link-exact-active {
@@ -121,6 +122,10 @@ nav a:first-of-type {
   display: flex;
   align-items: center;
   margin-left: auto;
+}
+
+.username {
+  color: white;
 }
 
 #profileButton {

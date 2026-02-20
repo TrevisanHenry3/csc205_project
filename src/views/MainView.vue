@@ -4,7 +4,7 @@ import { ref } from "vue";
 
 const isOpen = ref(0);
 
-const collapses = ref([
+const courses = ref([
     {
         title: "Core",
         text: `BIB 112`,
@@ -24,6 +24,7 @@ const collapses = ref([
 
 <template>
     <div class="dashboardContainer">
+        <!--LEFT SIDE-->
         <div class="degreeProgress">
             <div class="container">
                 <h2>Steven Adams</h2>
@@ -55,19 +56,27 @@ const collapses = ref([
             </div>
         </div>
 
+
+        <!--CENTER-->
         <div class="scheduleLayout">
             <section class="column">
                 <h2>Fall 2026</h2>
+                <CourseCard />
+                <CourseCard />
             </section>
             <section class="column">
                 <h2>Spring 2027</h2>
+                <CourseCard />
+                <CourseCard />
             </section>
         </div>
 
+
+        <!--RIGHT SIDE-->
         <div class="courseCatalog">
             <section>
                 <!--Taken from https://oruga-ui.com/components/Collapse.html-->
-                <o-collapse v-for="(collapse, index) of collapses" :key="index" class="card" animation="slide"
+                <o-collapse v-for="(collapse, index) of courses" :key="index" class="card" animation="slide"
                     :open="isOpen === index" @update:open="isOpen = (isOpen === index ? null : index)">
                     <template #trigger="{ open }">
                         <div class="card-header"
@@ -97,6 +106,8 @@ const collapses = ref([
     </div>
 </template>
 
+
+<!--STYLES-->
 <style>
 .dashboardContainer {
     display: grid;
