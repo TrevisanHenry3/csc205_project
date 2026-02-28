@@ -1,23 +1,71 @@
 <script setup>
-import CourseCard from "@/components/CourseCard.vue";
 import { ref } from "vue";
+import CourseCard from "@/components/CourseCard.vue";
+import { VueDraggableNext } from 'vue-draggable-next';
+
+
+// Current issue with these courses not showing up - debug shows it is getting the data in fall column but not rendering?
+const fall26 = ref([
+    {
+        id: 1,
+        title: 'Databases',
+        number: 'CSC363',
+        credits: 3,
+        grade: 92,
+    },
+    {
+        id: 2,
+        title: 'Object Oriented Programming',
+        number: 'CSC102',
+        credits: 3,
+        grade: 78,
+    }
+]);
+const spring27 = ref([
+    {
+        id: 3,
+        title: 'Algorithms',
+        number: 'CSC204',
+        credits: 3,
+        grade: 85,
+    }
+]);
+
+
+// Sample Course Data
+const courseList = ref([
+    {
+        id: 4,
+        title: 'Networks and Security',
+        number: 'CSC351',
+        credits: 4,
+        grade: 88,
+    },
+    {
+        id: 5,
+        title: 'HTML',
+        number: 'CSC190',
+        credits: 1,
+        grade: 52,
+    },
+]);
+
+// const newCourses = ref(courseList)
 
 const isOpen = ref(0);
 
 const courses = ref([
     {
-        title: "Core",
-        text: `BIB 112`,
+        title: "Core"
     },
     {
-        title: "Major",
-        text: "CSC 102",
+        title: "Major"
     },
     {
-        title: "Minor",
-        text: "BUS 101",
+        title: "Minor"
     },
 ]);
+
 
 </script>
 
@@ -59,15 +107,25 @@ const courses = ref([
 
         <!--CENTER-->
         <div class="scheduleLayout">
-            <section class="column">
+            <section class="column droppable">
                 <h2>Fall 2026</h2>
-                <CourseCard />
-                <CourseCard />
+                <!--https://www.youtube.com/watch?v=JlWL7TOoVLY-->
+                <!-- <draggable v-model="fall26" tag="div">
+                    <template #item="{ element: course }">
+                        <li>{{ course }}</li>
+                    </template>
+</draggable> -->
+                <VueDraggableNext :list="fall26" group="schedule" item-key="id" class="dropArea">
+                    <CourseCard v-for="course in fall26" :key="course.id" :course="course" />
+                </VueDraggableNext>
             </section>
-            <section class="column">
+
+            <section class="column droppable">
                 <h2>Spring 2027</h2>
-                <CourseCard />
-                <CourseCard />
+                <VueDraggableNext :list="spring27" group="schedule" item-key="id" class="dropArea">
+                    <CourseCard v-for="course in spring27" :key="course.id" :course="course" />
+                </VueDraggableNext>
+
             </section>
         </div>
 
@@ -92,8 +150,10 @@ const courses = ref([
 
                     <div class="card-content" style="border: 1px solid #eee; border-top: none;">
                         <div class="content" v-html="collapse.text"></div>
-                        <div class="cardContent">
-                            <CourseCard />
+                        <div class="cardContent dragContainer">
+                            <VueDraggableNext :list="courseList" group=schedule item-key="id" class="dropArea">
+                                <CourseCard v-for="course in courseList" :key="course.id" :course="course" />
+                            </VueDraggableNext>
                         </div>
                     </div>
                 </o-collapse>
@@ -125,6 +185,7 @@ const courses = ref([
     border-radius: 8px;
     margin-bottom: 200px;
     min-height: 300px;
+    max-height: 300px;
 }
 
 .containerProgress {
@@ -221,6 +282,10 @@ const courses = ref([
 .cardContent {
     display: flex;
     flex-direction: column;
+}
+
+.dropArea {
+    min-height: 300px;
 }
 
 .container {

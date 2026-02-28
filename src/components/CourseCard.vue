@@ -1,3 +1,14 @@
+<script setup lang="ts">
+
+const props = defineProps({
+    course: {
+        type: Object,
+        required: true
+    }
+});
+
+</script>
+
 <template>
     <div class="courseCard">
         <div class="cardLeft">
@@ -8,7 +19,7 @@
         <div class="cardBody">
             <div class="cardCenter">
                 <div class="courseName">
-                    <label><strong>Course Name</strong></label>
+                    <label><strong>{{ course.title }}</strong></label>
                 </div>
                 <div class="courseInfo">
                     <p>Spring </p>
@@ -19,15 +30,13 @@
         </div>
         <div class="cardRight">
             <div class="progressIndicator">
-                <o-icon icon="check"></o-icon>
+                <p>test</p>
             </div>
-            <div class="credits">3</div>
+            <div class="credits">{{ course.credits }}</div>
         </div>
     </div>
 </template>
-<script lang="ts">
 
-</script>
 <style>
 .courseCard {
     display: flex;
