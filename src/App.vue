@@ -1,7 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import axios from 'axios';
 import { RouterLink } from 'vue-router';
+import { useLoginStore } from '@/stores/login';
+const token = useLoginStore();
 
+//Test if store token is on shown on new page
+console.log('storeToken:', token.userToken)
+
+
+const logout = async () => {
+  console.log('Running logout')
+  try {
+    await axios.post('https://checksheets.cscprof.com/auth/logout');
+    token.$reset();
+    console.log('Logout successful');
+    console.log('storeToken:', token.userToken);
+  }
+  catch (error) {
+    console.log('Logout fail');
+    console.log(error);
+  }
+}
 </script>
 
 <template>
@@ -25,6 +45,8 @@ import { RouterLink } from 'vue-router';
 
       <div class="profileGroup">
         <p class="username">Scott Madeira</p>
+        <!--Test if store token is on new page-->
+        <p>{{ token.userToken }}</p>
         <div id="profileDropdown" style="padding-left: 1rem;">
           <o-dropdown position="bottom-right">
             <template #trigger="{ active }">
@@ -34,7 +56,11 @@ import { RouterLink } from 'vue-router';
               <RouterLink to="/change" class="navTab">Change Password</RouterLink>
             </o-dropdown-item>
             <o-dropdown-item>
-              <RouterLink to="/" class="navTab">Logout</RouterLink>
+              <RouterLink to="/" class="navTab" @submit="logout">Logout</RouterLink>
+            </o-dropdown-item>
+
+            <o-dropdown-item>
+              <button @click.prevent="logout">End token</button>
             </o-dropdown-item>
           </o-dropdown>
         </div>

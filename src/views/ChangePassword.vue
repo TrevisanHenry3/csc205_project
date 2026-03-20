@@ -13,6 +13,7 @@
       </o-field>
 
       <o-button size="default" variant="info">Confirm and Update</o-button>
+      <!-- /auth/password_reset (POST) -->
     </section>
   </div>
 </template>

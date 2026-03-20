@@ -19,7 +19,7 @@ const props = defineProps({
         <div class="cardBody">
             <div class="cardCenter">
                 <div class="courseName">
-                    <label><strong>{{ course.title }}</strong></label>
+                    <label><strong>{{ course.number }}</strong></label>
                 </div>
                 <div class="courseInfo">
                     <p>Spring </p>
