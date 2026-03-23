@@ -44,9 +44,9 @@ const logout = async () => {
       </nav>
 
       <div class="profileGroup">
-        <p class="username">Scott Madeira</p>
-        <!--Test if store token is on new page-->
-        <p>{{ token.userToken }}</p>
+        <!--Write username from token store-->
+        <p class="username">{{ token.first }} {{ token.last }}</p>
+
         <div id="profileDropdown" style="padding-left: 1rem;">
           <o-dropdown position="bottom-right">
             <template #trigger="{ active }">
@@ -59,9 +59,10 @@ const logout = async () => {
               <RouterLink to="/" class="navTab" @submit="logout">Logout</RouterLink>
             </o-dropdown-item>
 
-            <o-dropdown-item>
+            <!--Debug-->
+            <!-- <o-dropdown-item>
               <button @click.prevent="logout">End token</button>
-            </o-dropdown-item>
+            </o-dropdown-item> -->
           </o-dropdown>
         </div>
       </div>

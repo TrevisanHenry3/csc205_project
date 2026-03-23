@@ -1,33 +1,37 @@
 <script setup>
 import axios from 'axios';
 import { useLoginStore } from '@/stores/login';
-import ToggleButton from 'primevue/togglebutton';
 
 // https://primevue.org/datatable/ //
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 
 const token = useLoginStore();
+const activeFilter = ref(false);
+
+// All students
 const students = ref();
+// Only active students
+// https://vuejs.org/guide/essentials/computed
+const activeStudents = computed(() => {
+  if (activeFilter.value) {
+    return students.value.filter(student => student.is_active == 1);
+  }
+  else {
+    return students.value;
+  }
+})
+
 const columns = [
-  { field: 'student_id', header: 'Student ID' },
-  { field: 'firstname', header: 'First Name' },
-  { field: 'lastname', header: 'Last Name' },
+  { field: 'student_id', header: 'Student ID ' },
+  { field: 'firstname', header: 'First Name ' },
+  { field: 'lastname', header: 'Last Name ' },
   { field: 'majors', header: 'Major' },
   { field: 'credits', header: 'Credits' }
 ];
 
-axios.interceptors.request.use(request => {
-  console.log('--- AXIOS OUTGOING REQUEST ---');
-  console.log('URL:', request.url);
-  console.log('Method:', request.method);
-  console.log('Headers:', request.headers);
-  console.log('Data (Body):', request.data);
-  console.log('------------------------------');
-  return request;
-});
 
 const getStudents = async () => {
   try {
@@ -46,11 +50,26 @@ const getStudents = async () => {
   }
 }
 getStudents();
-// const students = ref([
-//   { id: 1, name: 'Steven Adams', major: 'Computer Science', credits: 30, status: true },
-//   { id: 2, name: 'Cythia Baker', major: 'Computer Science', credits: 40, status: false },
-//   { id: 3, name: 'Richard Condado', major: 'Cybersecurity', credits: 50, status: true }
-// ]);
+
+const updateActive = async (student) => {
+  try {
+    const header = {
+      headers: {
+        'x-token': token.userToken
+      }
+    }
+    const data = {
+      student_id: student.student_id,
+      is_active: student.is_active
+    }
+    // https://iproyal.com/blog/axios-headers/
+    const response = await axios.put('https://checksheets.cscprof.com/students', data, header);
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
 </script>
 
 
@@ -60,22 +79,26 @@ getStudents();
       <h1>Student List</h1>
     </div>
 
+    <o-field class="includeToggle">
+      <o-switch v-model="activeFilter">
+        Exclude Inactive Students
+      </o-switch>
+    </o-field>
     <div class="primeVueTable">
-      <DataTable v-model:selection="selectedStudent" :value="students" selectionMode="single"
+      <DataTable v-model:selection="selectedStudent" :value="activeStudents" selectionMode="single"
         :metaKeySelection="metaKey" dataKey="id" removableSort table-style="border: 2px solid">
-        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
-
-        <!-- <Column field="status" header="Status">
+        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable>
+        </Column>
+        <Column field="status" header="Status">
           <template #body="slotProps">
-            <ToggleButton v-model="slotProps.data.status" class="w-6rem" onLabel="Active" offLabel="Inactive">
-              <o-field>
-                <o-switch v-model="slotProps.data.status">
-                  {{ slotProps.data.status ? 'Active' : 'Inactive' }}
-                </o-switch>
-              </o-field>
-            </ToggleButton>
+            <o-field>
+              <o-switch v-model="slotProps.data.is_active" :true-value="1" :false-value="0"
+                @change="updateActive(slotProps.data)">
+                {{ slotProps.data.is_active ? 'Active' : 'Inactive' }}
+              </o-switch>
+            </o-field>
           </template>
-</Column> -->
+        </Column>
       </DataTable>
     </div>
   </div>
@@ -102,6 +125,10 @@ getStudents();
   width: 100%;
   border: 2px solid;
   border-radius: 8px;
+}
+
+.includeToggle {
+  margin-left: auto;
 }
 
 .primeVueTable {

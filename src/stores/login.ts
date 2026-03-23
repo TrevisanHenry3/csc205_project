@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 
 export const useLoginStore = defineStore('guid', {
-  state: () => ({ userToken: '' }),
+  state: () => ({ userToken: '', currentPass: '', first: '', last: '' }),
   getters: {
     
   },

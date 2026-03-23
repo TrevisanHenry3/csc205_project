@@ -1,8 +1,7 @@
 <!--https://stackoverflow.com/questions/41764184/post-form-data-with-axios-in-node-js-->
 <!-- Remaining Workflow
 - Setup change password function and save that as post request?
-- Dynamically add data to table 
-- Create multiple students and loop through returned data arrays for each student? -->
+ -->
 
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -40,8 +39,12 @@ const login = async () => {
     });
 
     token.userToken = response.data[0].user_guid;
+    token.first = response.data[0].firstname;
+    token.last = response.data[0].lastname;
+    token.currentPass = response.data[0].password;
     // Debug Printing
     console.log('storeToken:', token.userToken)
+    console.log('currentPass', token.currentPass)
     // Redirect upon login
     router.push('/list')
   }
@@ -52,7 +55,6 @@ const login = async () => {
 }
 
 </script>
-
 
 
 <template>
@@ -75,7 +77,6 @@ const login = async () => {
         </o-field>
 
         <o-button class="login" type="submit">Login</o-button>
-        <!--@click="$router.push('list')"-->
       </form>
 
     </section>
@@ -89,77 +90,3 @@ const login = async () => {
   margin-top: 2rem;
 }
 </style>
-
-
-
-
-<!-- Placeholder for a single major -->
-<!-- <p id="datablock">Basic content waiting for a major to show up</p>
-
-        <button class="button is-success is-small" onclick="fetchAMajor()">
-          Get A Major
-        </button>
-        <button class="button is-danger is-small" onclick="resetParagraph()">
-          Reset
-        </button>
-      </section>
-
-      <section class="mt-3">
-        <h2 class="is-size-4">List of Majors</h2>
-        <!-- Placeholder for list of majors-->
-<!-- <ul id="majorlist"></ul>
-      </section>
-    </div> -->
-
-<!-- Import the axios librarry -->
-<!-- <script src="./node_modules/axios/dist/axios.min.js"></script>
-
-    <script>
-
-      // Define variable to hold the paragraph with ID=datablock
-      const DataBlock = document.getElementById("datablock");
-
-      // Define variable to hold the empty list of majors
-      const MajorList = document.getElementById("majorlist");
-
-      // Process an array of data and append the values to a list on the page
-      function fetchMajors() {
-        var data;
-
-        console.log("---------- 1. Entering axios ----------");
-
-        // Make a request for a course with a given ID
-        // .get() and .then() will execute the .get.  .then() is called when the promise is fulfilled
-        axios
-          .get("https://checksheets.cscprof.com/majors")
-          //Then function -- now that we have data, what do we do
-          .then(function (response) {
-            // handle success
-            console.log("---------- 2. in .then() ----------");
-
-            majors = response.data;
-
-            console.log(majors);
-            //Shortcut forEach loop (what do you want forEach to do in ())
-            majors.forEach((major) => {
-              data = major.major_abbreviation + " - " + major.major_name;
-
-              var li = document.createElement("li");
-              li.textContent = data;
-
-              MajorList.appendChild(li);
-            });
-          })
-
-          .catch(function (error) {
-            console.log("In error()");
-            // handle error
-            console.log(error);
-          })
-          .finally(function () {
-            console.log("---------- 3. in finally() ---------- ");
-            // always executed
-          });
-
-        console.log("---------- 4. After axios call ---------- ");
-      } -->
