@@ -2,9 +2,32 @@
 import { ref } from "vue";
 import CourseCard from "@/components/CourseCard.vue";
 import { VueDraggableNext } from 'vue-draggable-next';
+import axios from 'axios';
+import { useLoginStore } from '@/stores/login';
 
 
-// Current issue with these courses not showing up - debug shows it is getting the data in fall column but not rendering?
+const token = useLoginStore();
+const courses = ref(null);
+
+async function getCourses() {
+    try {
+        const response = await axios.get('https://checksheets.cscprof.com/students', {
+            headers: {
+                'x-token': token.userToken
+            }
+        });
+        courses.value = response.data;
+        // console.log(courses.value[0]);
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+// Call axios to get the course listing
+getCourses();
+
+
 const fall26 = ref([
     {
         id: 1,
@@ -54,17 +77,17 @@ const courseList = ref([
 
 const isOpen = ref(0);
 
-const courses = ref([
-    {
-        title: "Core"
-    },
-    {
-        title: "Major"
-    },
-    {
-        title: "Minor"
-    },
-]);
+// const courses = ref([
+//     {
+//         title: "Core"
+//     },
+//     {
+//         title: "Major"
+//     },
+//     {
+//         title: "Minor"
+//     },
+// ]);
 
 
 </script>

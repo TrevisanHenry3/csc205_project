@@ -28,7 +28,7 @@ const columns = [
   { field: 'student_id', header: 'Student ID ' },
   { field: 'firstname', header: 'First Name ' },
   { field: 'lastname', header: 'Last Name ' },
-  { field: 'majors', header: 'Major' },
+  //{ field: 'majors', header: 'Major' },
   { field: 'credits', header: 'Credits' }
 ];
 
@@ -87,8 +87,16 @@ const updateActive = async (student) => {
     <div class="primeVueTable">
       <DataTable v-model:selection="selectedStudent" :value="activeStudents" selectionMode="single"
         :metaKeySelection="metaKey" dataKey="id" removableSort table-style="border: 2px solid">
-        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable>
+        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
+        <!--Gemini assisted code: Using scoped slots
+            Finds the current student being processed and creates slotProp object
+            Major column takes that info and accesses first result of major_name-->
+        <Column header="Major">
+          <template #body="slotProps">
+            {{ slotProps.data.majors[0]?.major_name }}
+          </template>
         </Column>
+        <!--End Gemini assisted code-->
         <Column field="status" header="Status">
           <template #body="slotProps">
             <o-field>
