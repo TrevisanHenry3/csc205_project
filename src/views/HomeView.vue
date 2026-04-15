@@ -44,7 +44,7 @@ const login = async () => {
     token.currentPass = response.data[0].password;
     // Debug Printing
     console.log('storeToken:', token.userToken)
-    console.log('currentPass', token.currentPass)
+    // console.log('currentPass', token.currentPass)
     // Redirect upon login
     router.push('/list')
   }

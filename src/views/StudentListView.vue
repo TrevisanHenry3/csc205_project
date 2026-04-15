@@ -149,6 +149,10 @@ const updateActive = async (student) => {
   padding: 5px;
 }
 
+:deep(.p-datatable-tbody > tr) {
+  background-color: bisque;
+  color: black;
+}
 
 
 /* Gemini recommeded using :deep to interact with PrimeVue */

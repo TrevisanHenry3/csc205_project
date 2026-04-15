@@ -1,93 +1,145 @@
 <script setup>
 import { ref } from "vue";
-import CourseCard from "@/components/CourseCard.vue";
-import { VueDraggableNext } from 'vue-draggable-next';
 import axios from 'axios';
+import CourseCard from "@/components/CourseCard.vue";
+import Semester from "@/components/Semester.vue";
+import { VueDraggableNext } from 'vue-draggable-next';
 import { useLoginStore } from '@/stores/login';
+import { useScheduleStore } from '@/stores/schedule';
+const schedule = useScheduleStore();
 
 
 const token = useLoginStore();
-const courses = ref(null);
+const courses = ref([]);
+const coreCourses = ref([]);
+const majorCourses = ref([]);
+// const scheduled = ref([]);
+// const transfer = ref([]);
+// const fall26 = ref([]);
+// const spring27 = ref([]);
+// const fall27 = ref([]);
+// const spring28 = ref([]);
+// const fall28 = ref([]);
+// const spring29 = ref([]);
+// const fall29 = ref([]);
+// const spring30 = ref([]);
+
+
 
 async function getCourses() {
+    console.log('Running getCourses');
     try {
-        const response = await axios.get('https://checksheets.cscprof.com/students', {
+        const response = await axios.get('https://checksheets.cscprof.com/courses', {
             headers: {
                 'x-token': token.userToken
             }
         });
         courses.value = response.data;
-        // console.log(courses.value[0]);
     }
     catch (error) {
         console.log(error);
     }
 }
-
 // Call axios to get the course listing
 getCourses();
 
 
-const fall26 = ref([
-    {
-        id: 1,
-        title: 'Databases',
-        number: 'CSC363',
-        credits: 3,
-        grade: 92,
-    },
-    {
-        id: 2,
-        title: 'Object Oriented Programming',
-        number: 'CSC102',
-        credits: 3,
-        grade: 78,
+async function getCoreCourses() {
+    console.log('Running getCoreCourses');
+    try {
+        const response = await axios.get('https://checksheets.cscprof.com/courses/core/prereqs', {
+            headers: { 'x-token': token.userToken }
+        });
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+        // Go through the response data from axios call and use .map to assign each to new coreCourses.value
+        // Returns new course object for each item in loop with defined type and status
+        // ...item.course takes all properties of item.course
+        schedule.coreCourses = response.data.map(item => {
+            return {
+                ...item.course,
+                type: 'core',
+                status: null
+            }
+        })
     }
-]);
-const spring27 = ref([
-    {
-        id: 3,
-        title: 'Algorithms',
-        number: 'CSC204',
-        credits: 3,
-        grade: 85,
+    catch (error) {
+        console.log(error);
     }
-]);
+}
+getCoreCourses();
+
+async function getMajorCourses() {
+    console.log('Running getCoreCourses');
+    try {
+        const response = await axios.get('https://checksheets.cscprof.com/courses/major/1/prereqs', {
+            headers: {
+                'x-token': token.userToken
+            }
+        });
+        majorCourses.value = response.data[0].courses.map(course => {
+            return {
+                ...course,
+                type: 'major',
+                status: null
+            }
+        })
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+getMajorCourses();
 
 
-// Sample Course Data
-const courseList = ref([
-    {
-        id: 4,
-        title: 'Networks and Security',
-        number: 'CSC351',
-        credits: 4,
-        grade: 88,
-    },
-    {
-        id: 5,
-        title: 'HTML',
-        number: 'CSC190',
-        credits: 1,
-        grade: 52,
-    },
-]);
 
-// const newCourses = ref(courseList)
 
 const isOpen = ref(0);
 
-// const courses = ref([
-//     {
-//         title: "Core"
-//     },
-//     {
-//         title: "Major"
-//     },
-//     {
-//         title: "Minor"
-//     },
-// ]);
+const courseCategories = ref([
+    {
+        title: "Core"
+    },
+    {
+        title: "Major"
+    },
+    {
+        title: "Minor"
+    },
+]);
+
+
+////////////////////////////////////////////////////
+//Need to easily bring this over from Semester.vue//
+////////////////////////////////////////////////////
+const semesterRules = {
+    0: { name: 'Any', courseSemesters: [1, 2, 3, 4, 5, 6, 7] },
+    1: { name: 'EvenFall', courseSemesters: [1, 3, 4] },
+    2: { name: 'OddFall', courseSemesters: [1, 3, 5] },
+    3: { name: 'EvenSpring', courseSemesters: [2, 3, 6] },
+    4: { name: 'OddSpring', courseSemesters: [2, 3, 7] },
+}
+const checkMove = (event) => {
+    const targetSemester = event.relatedContext.component;
+    const targetID = targetSemester.$attrs.semesterId;
+    const draggedItem = event.draggedContext.element;
+
+    //console.log('Dragging:', draggedItem.course_code, 'courseSemesterId', draggedItem.semester_id, 'into Semester:', targetID);
+
+    // Check if courseCard semester.id is within the courseSemesters related to this semesterID
+    const id = semesterRules[targetID]
+    const allowedIds = id.courseSemesters;
+
+    // Don't allow moving locked items
+    const compatible = allowedIds.includes(draggedItem.semester_id)
+    if (!compatible) {
+        return false
+    }
+
+    return true
+}
+/////////////////
+/////////////////
+
 
 
 </script>
@@ -98,14 +150,14 @@ const isOpen = ref(0);
         <!--LEFT SIDE-->
         <div class="degreeProgress">
             <div class="container">
-                <h2>Steven Adams</h2>
+                <h2>Henry Trevisan</h2>
             </div>
             <div class="container">
                 <p>Freshman | 22 credits</p>
             </div>
 
             <div class="containerProgress">
-                <label><strong>Major:</strong> Cybersecurity</label>
+                <label><strong>Major:</strong> Computer Science</label>
                 <div class="progressBar">
                     <div class="fill" style="width: 25%;"></div>
                 </div>
@@ -130,26 +182,15 @@ const isOpen = ref(0);
 
         <!--CENTER-->
         <div class="scheduleLayout">
-            <section class="column droppable">
-                <h2>Fall 2026</h2>
-                <!--https://www.youtube.com/watch?v=JlWL7TOoVLY-->
-                <!-- <draggable v-model="fall26" tag="div">
-                    <template #item="{ element: course }">
-                        <li>{{ course }}</li>
-                    </template>
-</draggable> -->
-                <VueDraggableNext :list="fall26" group="schedule" item-key="id" class="dropArea">
-                    <CourseCard v-for="course in fall26" :key="course.id" :course="course" />
-                </VueDraggableNext>
-            </section>
-
-            <section class="column droppable">
-                <h2>Spring 2027</h2>
-                <VueDraggableNext :list="spring27" group="schedule" item-key="id" class="dropArea">
-                    <CourseCard v-for="course in spring27" :key="course.id" :course="course" />
-                </VueDraggableNext>
-
-            </section>
+            <Semester title="Transfer" :list="schedule.transfer" :semesterId="0"></Semester>
+            <Semester title="Fall 26" :list="schedule.fall26" :semesterId="1"></Semester>
+            <Semester title="Spring 27" :list="schedule.spring27" :semesterId="4"></Semester>
+            <Semester title="Fall 27" :list="schedule.fall27" :semesterId="2"></Semester>
+            <Semester title="Spring 28" :list="schedule.spring28" :semesterId="3"></Semester>
+            <Semester title="Fall 28" :list="schedule.fall28" :semesterId="1"></Semester>
+            <Semester title="Spring 29" :list="schedule.spring29" :semesterId="4"></Semester>
+            <Semester title="Fall 29" :list="schedule.fall29" :semesterId="2"></Semester>
+            <Semester title="Spring 30" :list="schedule.spring30" :semesterId="3"></Semester>
         </div>
 
 
@@ -157,7 +198,7 @@ const isOpen = ref(0);
         <div class="courseCatalog">
             <section>
                 <!--Taken from https://oruga-ui.com/components/Collapse.html-->
-                <o-collapse v-for="(collapse, index) of courses" :key="index" class="card" animation="slide"
+                <o-collapse v-for="(collapse, index) of courseCategories" :key="index" class="card" animation="slide"
                     :open="isOpen === index" @update:open="isOpen = (isOpen === index ? null : index)">
                     <template #trigger="{ open }">
                         <div class="card-header"
@@ -171,17 +212,42 @@ const isOpen = ref(0);
                         </div>
                     </template>
 
-                    <div class="card-content" style="border: 1px solid #eee; border-top: none;">
+                    <div v-if="collapse.title == 'Core' && schedule.coreCourses.length > 0" class="card-content"
+                        style="border: 1px solid #eee; border-top: none;">
                         <div class="content" v-html="collapse.text"></div>
                         <div class="cardContent dragContainer">
-                            <VueDraggableNext :list="courseList" group=schedule item-key="id" class="dropArea">
-                                <CourseCard v-for="course in courseList" :key="course.id" :course="course" />
+                            <VueDraggableNext :list="schedule.coreCourses" :move="checkMove" :semesterId="0"
+                                group="schedule" item-key="id" class="dropArea">
+                                <CourseCard v-for="coreCourse in schedule.coreCourses" :key="coreCourse.course_id"
+                                    :course="coreCourse" />
                             </VueDraggableNext>
                         </div>
                     </div>
+                    <div v-else-if="collapse.title == 'Major' && majorCourses.length > 0" class="card-content"
+                        style="border: 1px solid #eee; border-top: none;">
+                        <div class="content" v-html="collapse.text"></div>
+                        <div class="cardContent dragContainer">
+                            <!--Gemini helped explain how to access data structure
+                                Need to take first element of major array structure
+                                And access courses property-->
+                            <VueDraggableNext :list="majorCourses" :move="checkMove" :semesterId="0" group="schedule"
+                                item-key="id" class="dropArea">
+                                <CourseCard v-for="majorCourse in majorCourses" :key="majorCourse.course_id"
+                                    :course="majorCourse" />
+                            </VueDraggableNext>
+                        </div>
+                    </div>
+                    <!-- <div class="card-content" style="border: 1px solid #eee; border-top: none;">
+                        <div class="content" v-html="collapse.text"></div>
+                        <div class="cardContent dragContainer">
+                            <VueDraggableNext :list="courses" :move="checkMove" :semesterId="0" group="schedule"
+                                item-key="id" class="dropArea">
+                                <CourseCard v-for="course in courses" :key="course.course_id" :course="course" />
+                            </VueDraggableNext>
+                        </div>
+                    </div> -->
                 </o-collapse>
                 <div>
-
                 </div>
             </section>
 
@@ -241,12 +307,20 @@ const isOpen = ref(0);
     text-align: center;
 }
 
+.column.isInvalid {
+    border-color: red;
+}
+
 .courseCatalog {
     display: flex;
     flex-direction: column;
+    position: fixed;
+    right: 0;
+    height: 80vh;
+    overflow-y: auto;
     border: 2px solid;
     border-radius: 8px;
-    margin-bottom: 200px;
+    margin-bottom: 20px;
 }
 
 .collapsible {
@@ -308,7 +382,7 @@ const isOpen = ref(0);
 }
 
 .dropArea {
-    min-height: 300px;
+    min-height: 100%;
 }
 
 .container {
