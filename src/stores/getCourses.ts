@@ -1,14 +1,15 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import { useLoginStore } from '@/stores/login';
-import { useScheduleStore } from '@/stores/schedule';
 
 
 export const useCoursesStore = defineStore('courses', () => {
 
+    const coreCourses = ref([]);
+    const majorCourses = ref([]);
+    const minorCourses = ref([]);
     const token = useLoginStore();
-    const schedule = useScheduleStore();
 
     async function getCoreCourses() {
         console.log('Running getCoreCourses');
@@ -20,7 +21,7 @@ export const useCoursesStore = defineStore('courses', () => {
             // Go through the response data from axios call and use .map to assign each to new coreCourses.value
             // Returns new course object for each item in loop with defined type and status
             // ...item.course takes all properties of item.course
-            schedule.coreCourses = response.data.map(item => {
+            coreCourses.value = response.data.map(item => {
                 return {
                     ...item.course,
                     type: 'core',
@@ -33,7 +34,46 @@ export const useCoursesStore = defineStore('courses', () => {
         }
     }
 
-    // These return values are the values and functions that are accessible from 
-    // outside the store.  This of it like Public in an OO program
-    return { token, schedule, getCoreCourses }
-})
+    async function getMajorCourses() {
+        console.log('Running getMajorCourses');
+        try {
+            const response = await axios.get('https://checksheets.cscprof.com/courses/major/1/prereqs', {
+                headers: {
+                    'x-token': token.userToken
+                }
+            });
+            majorCourses.value = response.data[0].courses.map(course => {
+                return {
+                    ...course,
+                    type: 'major',
+                    status: null
+                }
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function getMinorCourses() {
+        console.log('Running getMinorCourses');
+        try {
+            const response = await axios.get('https://checksheets.cscprof.com/courses/minor/3/prereqs', {
+                headers: {
+                    'x-token': token.userToken
+                }
+            });
+            minorCourses.value = response.data[0].courses.map(course => {
+                return {
+                    ...course,
+                    type: 'minor',
+                    status: null
+                }
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    return { coreCourses, majorCourses, minorCourses, getCoreCourses, getMajorCourses, getMinorCourses }
+}, { persist: true })

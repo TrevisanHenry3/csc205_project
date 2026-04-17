@@ -41,7 +41,6 @@ const courseStatus = ref([
 //     return Object.keys(preReqArray).length;
 //     //     return 'Yes';
 //     // }
-
 //     // return null;
 // });
 
@@ -52,7 +51,8 @@ const courseStatus = ref([
     <div class="courseCard">
         <div class="cardLeft">
             <div class="categoryIndicator">
-                <div class="fill" :class="{ 'core': course.type == 'core', 'major': course.type == 'major' }"
+                <div class="fill"
+                    :class="{ 'core': course.type == 'core', 'major': course.type == 'major', 'minor': course.type == 'minor' }"
                     style="height:100%;"></div>
             </div>
         </div>
@@ -79,11 +79,18 @@ const courseStatus = ref([
         <div class="cardRight">
             <div class="progressIndicator">
                 <!--https://v3.primevue.org/dropdown/#theming.unstyled-->
-                <Dropdown v-model="course.status" :options="courseStatus" optionLabel="name">
+                <Dropdown v-model="course.status" :options="courseStatus" :class="{
+                    'failed': course.status?.name == 'Failed',
+                    'passed': course.status?.name == 'Passed',
+                    'in-progress': course.status?.name == 'In-Progress',
+                    'scheduled': course.status?.name == 'Scheduled',
+                    'audit': course.status?.name == 'Audit',
+                    'transfer': course.status?.name == 'Transfer'
+                }" optionLabel="name">
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="statusOptions">
-                            <font-awesome-icon class="statusIcon" :icon="slotProps.value.icon"></font-awesome-icon>
-                            <div>{{ slotProps.value.name }}</div>
+                            <!-- <font-awesome-icon class="statusIcon" :icon="slotProps.value.icon"></font-awesome-icon> -->
+                            <div class="selectLabel"><strong>{{ slotProps.value.name }}</strong></div>
                         </div>
                         <span v-else>
                             {{ slotProps.placeholder }}
@@ -91,7 +98,7 @@ const courseStatus = ref([
                     </template>
                     <template #option="slotProps">
                         <div class="statusOptions">
-                            <font-awesome-icon class="statusIcon" :icon="slotProps.option.icon"></font-awesome-icon>
+                            <!-- <font-awesome-icon class="statusIcon" :icon="slotProps.option.icon"></font-awesome-icon> -->
                             <div>{{ slotProps.option.name }}</div>
                         </div>
                     </template>
@@ -102,15 +109,16 @@ const courseStatus = ref([
     </div>
 </template>
 
-<style>
+<style scoped>
 .popup {
     background-color: white;
     margin: 10px;
 }
 
-:deep(.p-dropdown) {
-    background-color: bisque;
+.selectLabel {
+    color: black
 }
+
 
 .statusOptions {
     display: flex;
@@ -145,7 +153,6 @@ const courseStatus = ref([
 
 .courseName {
     font-size: 1.5rem;
-
 }
 
 .courseInfo {
@@ -190,5 +197,34 @@ const courseStatus = ref([
 .fill.major {
     height: 100%;
     background: blue;
+}
+
+.fill.minor {
+    height: 100%;
+    background: palevioletred;
+}
+
+.failed {
+    background: #ea6161;
+}
+
+.passed {
+    background: #A3C1AD
+}
+
+.in-progress {
+    background: #B9CBD9;
+}
+
+.scheduled {
+    background: #f9e87a
+}
+
+.audit {
+    background: #eb83f2
+}
+
+.transfer {
+    background: #c38c2e;
 }
 </style>

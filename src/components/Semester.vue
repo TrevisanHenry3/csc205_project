@@ -46,8 +46,8 @@ const checkMove = (event) => {
 
 <template>
     <!--https://vuejs.org/guide/essentials/class-and-style -->
-    <section class="column droppable" :class="{ 'isInvalid': !isValid && isHover }" @dragend="isValid = true"
-        @dragstart="isHover = true" @dragexit="isHover = false" @mouseup="isHover = false">
+    <section class="column droppable" :class="{ 'isInvalid': !isValid && isHover, 'isValid': isValid }"
+        @dragend="isValid = true" @dragstart="isHover = true" @dragexit="isHover = false" @mouseup="isHover = false">
         <h2>{{ title }}</h2>
         <VueDraggableNext :list="list" :move="checkMove" :semesterId="semesterId" group="schedule" item-key="id"
             class="dropArea">
