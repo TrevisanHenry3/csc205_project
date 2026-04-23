@@ -5,8 +5,10 @@ import Semester from "@/components/Semester.vue";
 import { VueDraggableNext } from 'vue-draggable-next';
 import { useScheduleStore } from '@/stores/schedule';
 import { useCoursesStore } from "@/stores/getCourses";
+import { useStudentsStore } from "@/stores/student";
 const schedule = useScheduleStore();
 const coursesStore = useCoursesStore();
+const studentStore = useStudentsStore();
 
 
 if (coursesStore.coreCourses.length < 1) {
@@ -58,25 +60,34 @@ const restriction = computed(() => {
 
 // https://www.npmjs.com/package/vue-draggable-next
 const checkMove = (event) => {
-    const targetSemester = event.relatedContext.component;
-    const targetID = targetSemester.$attrs.semesterId;
-    const draggedItem = event.draggedContext.element;
+    const targetSemester = event.relatedContext.component;      //The semester being dropped into
+    const targetID = targetSemester.$attrs.semesterId;          //The semesterRules Id for targetSemester
+    const targetScheduleID = targetSemester.$attrs.scheduleId   //The chronological semester ID for targetSemester
+    const draggedItem = event.draggedContext.element;           //The course card being dragged
+    //Make into array and check if it has items
     const hasPreReq = Array.isArray(draggedItem.prereqs) && draggedItem.prereqs.length > 0
+    //https://stackoverflow.com/questions/4020796/finding-the-max-value-of-a-property-in-an-array-of-objects
+    const prereqMaxId = Math.max(...draggedItem.prereqs.map(prereq => {
+        const temp = schedule.scheduled.find(course => course.course_id === prereq.course_id);
+        return temp.scheduleId;
+    }))
 
-    //console.log('Dragging:', draggedItem.course_code, 'courseSemesterId', draggedItem.semester_id, 'into Semester:', targetID);
+    // console.log("prereq Schedule ID", draggedItem.prereqs[0].scheduleId)
+    // console.log("dragged course", draggedItem)
+    // console.log("prereq course", draggedItem.prereqs)
+    // console.log("prereqMaxID", prereqMaxId)
+    // console.log('Dragging:', draggedItem.course_code, 'dragged Item semester', draggedItem.semester_id, 'into Semester:', targetSemester.$attrs);
 
     // Check if courseCard semester.id is within the courseSemesters related to this semesterID
     const id = semesterRules[targetID]
     const allowedIds = id.courseSemesters;
     const compatible = allowedIds.includes(draggedItem.semester_id)
-    //First check if semesters match
+    //First check if allowed semesters match
     if (!compatible) {
         return false
     }
-    //Second check if prereq courses match
+    //Second check if all prereq courses have been scheduled
     else if (hasPreReq) {
-        console.log("True has PreReq", draggedItem.prereqs)
-
         // Gemini assisted for how to check array of arrays contains a certain value
         // Also https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
         // .every checks each prereq value of draggedItem.prereqs array
@@ -87,32 +98,46 @@ const checkMove = (event) => {
             });
         });
 
-
+        // If the course has all prereqs scheduled -- make sure prereqs are scheduled before targetSemester
+        // Then check if the course has min credits requirements
         if (isSchedulable) {
+
             if (draggedItem.minimum_credits > 0) {
-                if (draggedItem.minimum_credits == 28) {
+                if (draggedItem.minimum_credits == 28 && studentStore.totalCredits < 28) {
                     alert("Must be a Sophomore to take this course")
+                    return false
                 }
-                else if (draggedItem.minimum_credits == 60) {
+                else if (draggedItem.minimum_credits == 60 && studentStore.totalCredits < 60) {
                     alert("You must be a Junior to take this course")
+                    return false
                 }
             }
-            return true
+            // Turn draggedItem.prereq into the max value of the scheduleId of every prereq course
+            if (targetScheduleID < prereqMaxId) {
+                alert("Course cannot be scheduled before prereqs")
+                return false
+            }
+
         }
         else {
             alert("Prereqs not met for ", draggedItem.course_code)
             return false
         }
     }
+    draggedItem.scheduleId = targetScheduleID;
+    console.log("scheduleId", draggedItem.scheduleId)
     return true
 }
 /////////////////
 /////////////////
 
-function showSchedule() {
-    console.log("Scheduled Courses", schedule.scheduled)
-    console.log(schedule.scheduled.length)
+function showPassed() {
+    console.log("Passed Courses", schedule.passed)
 }
+function showCredits() {
+    console.log("Credits", studentStore.totalCredits)
+}
+
 
 </script>
 
@@ -125,10 +150,11 @@ function showSchedule() {
                 <h2>Henry Trevisan</h2>
             </div>
             <div>
-                <button @click="showSchedule">Click</button>
+                <button @click="showPassed">Show Passed</button>
+                <button @click="showCredits">Show Credits</button>
             </div>
             <div class="container">
-                <p>Freshman | 22 credits</p>
+                <p>Sophomore | 55 credits</p>
             </div>
 
             <div class="containerProgress">
@@ -157,15 +183,15 @@ function showSchedule() {
 
         <!--CENTER-->
         <div class="scheduleLayout">
-            <Semester title="Transfer" :list="schedule.transfer" :semesterId="0"></Semester>
-            <Semester title="Fall 26" :list="schedule.fall26" :semesterId="1"></Semester>
-            <Semester title="Spring 27" :list="schedule.spring27" :semesterId="4"></Semester>
-            <Semester title="Fall 27" :list="schedule.fall27" :semesterId="2"></Semester>
-            <Semester title="Spring 28" :list="schedule.spring28" :semesterId="3"></Semester>
-            <Semester title="Fall 28" :list="schedule.fall28" :semesterId="1"></Semester>
-            <Semester title="Spring 29" :list="schedule.spring29" :semesterId="4"></Semester>
-            <Semester title="Fall 29" :list="schedule.fall29" :semesterId="2"></Semester>
-            <Semester title="Spring 30" :list="schedule.spring30" :semesterId="3"></Semester>
+            <Semester title="Transfer" :list="schedule.transfer" :semesterId="0" :scheduleId="0"></Semester>
+            <Semester title="Fall 26" :list="schedule.fall26" :semesterId="1" :scheduleId="1"></Semester>
+            <Semester title="Spring 27" :list="schedule.spring27" :semesterId="4" :scheduleId="2"></Semester>
+            <Semester title="Fall 27" :list="schedule.fall27" :semesterId="2" :scheduleId="3"></Semester>
+            <Semester title="Spring 28" :list="schedule.spring28" :semesterId="3" :scheduleId="4"></Semester>
+            <Semester title="Fall 28" :list="schedule.fall28" :semesterId="1" :scheduleId="5"></Semester>
+            <Semester title="Spring 29" :list="schedule.spring29" :semesterId="4" :scheduleId="6"></Semester>
+            <Semester title="Fall 29" :list="schedule.fall29" :semesterId="2" :scheduleId="7"></Semester>
+            <Semester title="Spring 30" :list="schedule.spring30" :semesterId="3" :scheduleId="8"></Semester>
         </div>
 
 

@@ -1,7 +1,6 @@
 <script setup>
 import axios from 'axios';
 import { useLoginStore } from '@/stores/login';
-
 // https://primevue.org/datatable/ //
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -10,6 +9,7 @@ import { ref, computed } from 'vue';
 
 const token = useLoginStore();
 const activeFilter = ref(false);
+const selectedStudent = ref();
 
 // All students
 const students = ref();
@@ -28,7 +28,6 @@ const columns = [
   { field: 'student_id', header: 'Student ID ' },
   { field: 'firstname', header: 'First Name ' },
   { field: 'lastname', header: 'Last Name ' },
-  //{ field: 'majors', header: 'Major' },
   { field: 'credits', header: 'Credits' }
 ];
 
@@ -51,6 +50,7 @@ const getStudents = async () => {
 }
 getStudents();
 
+// Update active status toggle
 const updateActive = async (student) => {
   try {
     const header = {

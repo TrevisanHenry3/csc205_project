@@ -25,7 +25,9 @@ export const useCoursesStore = defineStore('courses', () => {
                 return {
                     ...item.course,
                     type: 'core',
-                    status: null
+                    status: null,
+                    schedule: null,
+                    scheduleId: 0
                 }
             })
         }
@@ -46,7 +48,9 @@ export const useCoursesStore = defineStore('courses', () => {
                 return {
                     ...course,
                     type: 'major',
-                    status: null
+                    status: null,
+                    schedule: null,
+                    scheduleId: 0
                 }
             })
         }
@@ -67,7 +71,9 @@ export const useCoursesStore = defineStore('courses', () => {
                 return {
                     ...course,
                     type: 'minor',
-                    status: null
+                    status: null,
+                    schedule: null,
+                    scheduleId: 0
                 }
             })
         }

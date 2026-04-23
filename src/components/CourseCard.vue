@@ -33,18 +33,6 @@ const courseStatus = ref([
 ]);
 
 
-
-// Computed property logic
-// const hasPreReq = computed(() => {
-//     const preReqArray = props.course.prereqs;
-
-//     return Object.keys(preReqArray).length;
-//     //     return 'Yes';
-//     // }
-//     // return null;
-// });
-
-
 </script>
 
 <template>
@@ -79,7 +67,8 @@ const courseStatus = ref([
         <div class="cardRight">
             <div class="progressIndicator">
                 <!--https://v3.primevue.org/dropdown/#theming.unstyled-->
-                <Dropdown v-model="course.status" :options="courseStatus" :class="{
+                <Dropdown v-model="course.status" :options="courseStatus" showClear :class="{
+                    'p-select-dropdown-null': !course.status,
                     'failed': course.status?.name == 'Failed',
                     'passed': course.status?.name == 'Passed',
                     'in-progress': course.status?.name == 'In-Progress',
@@ -90,7 +79,9 @@ const courseStatus = ref([
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="statusOptions">
                             <!-- <font-awesome-icon class="statusIcon" :icon="slotProps.value.icon"></font-awesome-icon> -->
-                            <div class="selectLabel"><strong>{{ slotProps.value.name }}</strong></div>
+                            <div class="selectLabel" :class="{ '.p-select-dropdown-null': slotProps.value == null }">
+                                <strong>{{ slotProps.value.name }}</strong>
+                            </div>
                         </div>
                         <span v-else>
                             {{ slotProps.placeholder }}
@@ -116,7 +107,19 @@ const courseStatus = ref([
 }
 
 .selectLabel {
-    color: black
+    color: black;
+}
+
+:deep(.p-select) {
+    max-width: 130px;
+}
+
+:deep(.p-select-dropdown) {
+    color: White;
+}
+
+:deep(.p-select-clear-icon) {
+    color: black;
 }
 
 
