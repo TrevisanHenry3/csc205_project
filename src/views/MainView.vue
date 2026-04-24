@@ -149,10 +149,6 @@ function showCredits() {
             <div class="container">
                 <h2>Henry Trevisan</h2>
             </div>
-            <div>
-                <button @click="showPassed">Show Passed</button>
-                <button @click="showCredits">Show Credits</button>
-            </div>
             <div class="container">
                 <p>Sophomore | 55 credits</p>
             </div>
