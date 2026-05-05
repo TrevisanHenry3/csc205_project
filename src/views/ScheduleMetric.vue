@@ -124,17 +124,9 @@ function test() {
             <div class="containerProgress">
                 <label><strong>Credits Scheduled:</strong> {{ studentStore.currentScheduledCredits }}</label>
             </div>
-            <button @click="test">Test Function</button>
         </div>
 
-        <!--Sample demo code-->
-        <!-- <div v-for="(dataset, index) in allData" :key="index">
-            <h3>{{ dataset.title }}</h3>
-            <DataTable :value="dataset.items">
-                <Column field="name" header="Name"></Column>
-                <Column field="status" header="Status"></Column>
-            </DataTable>
-        </div> -->
+
         <div class="mainContent">
             <div class="chart">
                 <canvas ref="myChart"></canvas>
@@ -252,7 +244,7 @@ function test() {
 }
 
 :deep(.major_course) {
-    background-color: #6a6afa;
+    background-color: #9292ff;
     color: black;
 }
 
