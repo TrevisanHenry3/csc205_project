@@ -39,6 +39,9 @@ const logout = async () => {
           <li>
             <RouterLink to="/main" class="navTab">Schedule View</RouterLink>
           </li>
+          <li>
+            <RouterLink to="/metrics" class="navTab">Schedule Metrics</RouterLink>
+          </li>
         </ul>
 
       </nav>

@@ -9,6 +9,8 @@ export const useCoursesStore = defineStore('courses', () => {
     const coreCourses = ref([]);
     const majorCourses = ref([]);
     const minorCourses = ref([]);
+    const majorCredits = ref();
+    const minorCredits = ref();
     const token = useLoginStore();
 
     async function getCoreCourses() {
@@ -53,6 +55,7 @@ export const useCoursesStore = defineStore('courses', () => {
                     scheduleId: 0
                 }
             })
+            majorCredits.value = majorCourses.value.reduce((sum, item) => sum + item.credits, 0);
         }
         catch (error) {
             console.log(error);
@@ -76,10 +79,11 @@ export const useCoursesStore = defineStore('courses', () => {
                     scheduleId: 0
                 }
             })
+            minorCredits.value = minorCourses.value.reduce((sum, item) => sum + item.credits, 0);
         }
         catch (error) {
             console.log(error);
         }
     }
-    return { coreCourses, majorCourses, minorCourses, getCoreCourses, getMajorCourses, getMinorCourses }
+    return { coreCourses, majorCourses, minorCourses, getCoreCourses, getMajorCourses, getMinorCourses, majorCredits, minorCredits }
 }, { persist: true })

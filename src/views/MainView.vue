@@ -40,7 +40,7 @@ const courseCategories = ref([
 
 
 ////////////////////////////////////////////////////
-//Need to easily bring this over from Semester.vue//
+// Check Move Function //
 ////////////////////////////////////////////////////
 const semesterRules = {
     0: { name: 'Any', courseSemesters: [1, 2, 3, 4, 5, 6, 7] },
@@ -131,13 +131,6 @@ const checkMove = (event) => {
 /////////////////
 /////////////////
 
-function showPassed() {
-    console.log("Passed Courses", schedule.passed)
-}
-function showCredits() {
-    console.log("Credits", studentStore.totalCredits)
-}
-
 
 </script>
 
@@ -150,32 +143,37 @@ function showCredits() {
                 <h2>Henry Trevisan</h2>
             </div>
             <div class="container">
-                <p>Sophomore | 55 credits</p>
+                <p>{{ studentStore.classStanding }} | {{ studentStore.totalCredits }} credits</p>
             </div>
 
             <div class="containerProgress">
                 <label><strong>Major:</strong> Computer Science</label>
                 <div class="progressBar">
-                    <div class="fill" style="width: 25%;"></div>
+                    <div class="fill" :style="{ width: studentStore.majorCreditPercent + '%' }"></div>
                 </div>
-                <p>6 / 24</p>
+                <p>{{ studentStore.earnedMajorCredits }} / {{ coursesStore.majorCredits }}</p>
             </div>
             <div class="containerProgress">
                 <label><strong>Minor:</strong> Data Science</label>
                 <div class="progressBar">
-                    <div class="fill" style="width: 17%;"></div>
+                    <div class="fill" :style="{ width: studentStore.minorCreditPercent + '%' }"></div>
                 </div>
-                <p>3 / 18</p>
+                <p>{{ studentStore.earnedMinorCredits }} / {{ coursesStore.minorCredits }}</p>
             </div>
             <div class="containerProgress">
                 <label><strong>Total:</strong></label>
                 <div class="progressBar">
-                    <div class="fill" style="width: 25%;"></div>
+                    <div class="fill" :style="{ width: studentStore.totalCreditPercent + '%' }"></div>
                 </div>
-                <p>30 / 120</p>
+                <p>{{ studentStore.totalCredits }} / 120</p>
+            </div>
+            <div class="containerProgress">
+                <label><strong>Credits in Progress:</strong> {{ studentStore.progressCredits }}</label>
+            </div>
+            <div class="containerProgress">
+                <label><strong>Credits Scheduled:</strong> {{ studentStore.currentScheduledCredits }}</label>
             </div>
         </div>
-
 
         <!--CENTER-->
         <div class="scheduleLayout">
@@ -272,8 +270,8 @@ function showCredits() {
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 200px;
-    min-height: 300px;
-    max-height: 300px;
+    min-height: 350px;
+    max-height: 350px;
 }
 
 .containerProgress {
